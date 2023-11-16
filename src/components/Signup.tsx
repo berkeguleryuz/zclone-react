@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import background1 from "../images/1.jpg";
-import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  sendEmailVerification,
+  signInWithPopup,
+} from "firebase/auth";
 import { auth, googleProvider } from "../firebase/setup";
 import { Link } from "react-router-dom";
 
@@ -21,10 +26,14 @@ const Signup = (props: Props) => {
   const emailSignup = async () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
+      onAuthStateChanged(auth, async (user: any) => {
+        await sendEmailVerification(user);
+      });
     } catch (err) {
       console.log(err);
     }
   };
+  console.log(auth);
   return (
     <div
       className="relative z-10"
@@ -39,7 +48,8 @@ const Signup = (props: Props) => {
 
       <div className="fixed text-center w-screen sm:inset-0 mt-20 sm:mt-0">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          <div className="relative transform 
+          <div
+            className="relative transform 
            rounded-lg bg-white text-left shadow-xl transition-all my-8 w-96 sm:max-w-lg">
             <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
               <div className="flex justify-between">
